@@ -1,0 +1,49 @@
+@import "./base/mixin";
+@import "./base/base";
+
+.App {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+.form{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    
+    & .inputCon{
+        margin: 1.4rem;
+        width: 80%;
+        input{
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid black;
+            border-radius: 2px;
+            color: rgb(150, 150, 150);
+            font-weight: bold;
+        }
+    }
+
+    .flash{
+        font-size: 1.5rem;
+    }
+
+    button{
+        width: 80%;
+        background: rgb(112, 112, 112);
+        color: white;
+        font-weight: bold;
+        padding: 1.4rem;
+        margin: 1rem;
+        border: none;
+
+
+        &:hover{
+            background: black;
+        }
+    }
+}
