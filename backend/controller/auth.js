@@ -8,7 +8,7 @@ const utils = require('../utils/utils');
 exports.signup=(req, res, next)=>{
     const name = req.body.name;
     const password = req.body.password;
-    const email = req.body.password;
+    const email = req.body.email;
     const recaptchaToken = req.body.recaptchaToken;
     
     const errors = validationResult(req);

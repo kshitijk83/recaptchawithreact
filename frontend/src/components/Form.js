@@ -66,7 +66,7 @@ const Form = (props) => {
         } else{
             sendRequest(apiConstants.SIGNUP_ROUTE, constants.POST, data)
             .then((data)=>{
-                if(data.captchaRequired){
+                if(data&&data.captchaRequired){
                     dispatch({type: constants.SET_RECAPTCHA_REQUIRED, value: data.captchaRequired})
                 }
             })
