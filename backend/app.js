@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const rateLimiterMiddleware = require('./rateLimiter');
+
 const routeConstants = require('./appConstants'); 
 
 const authRoutes = require('./routes/auth');
@@ -17,6 +19,8 @@ app.use((req, res, next)=>{
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 })
+
+app.use(rateLimiterMiddleware);
 
 app.use(routeConstants.authRoute, authRoutes);
 app.use(routeConstants.checkRoute, checkRoute);

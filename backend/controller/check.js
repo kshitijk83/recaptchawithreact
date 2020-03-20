@@ -1,3 +1,6 @@
 exports.check = (req, res, next)=>{
-    console.log('check');
+    res.status(200).json({
+        captchaRequired: res.locals.captchaRequired
+        // captchaRequired: false
+    });
 }

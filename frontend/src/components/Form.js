@@ -1,4 +1,4 @@
-import React, {useReducer, useRef} from 'react';
+import React, {useReducer, useRef, useEffect} from 'react';
 import ReCaptcha from 'react-google-recaptcha';
 import useHttp from '../hooks/http';
 import * as constants from '../constants';
@@ -9,7 +9,7 @@ const initState = {
     email: '',
     password: '',
     token: '',
-    recaptchaRequired: true
+    recaptchaRequired: false
 }
 
 const userReducer = (currentState, action)=>{
@@ -49,27 +49,43 @@ const Form = (props) => {
     const {
         httpState,
         sendRequest,
-        // clear,
+        clear,
     } = useHttp();
     const recaptchaComponent = useRef(null);
     const onSubmitHandler = (event)=>{
+        console.log('blah');
         event.preventDefault();
         let data = {
             name: state.name,
             email: state.email,
             password: state.password,
-            recaptchaToken: state.token
         }
+        clear();
         if(state.recaptchaRequired&&state.token){
+            data.recaptchaToken = state.token;
             sendRequest(apiConstants.SIGNUP_ROUTE, constants.POST, data)
         } else{
-            // send request without token
+            sendRequest(apiConstants.SIGNUP_ROUTE, constants.POST, data)
+            .then((data)=>{
+                if(data.captchaRequired){
+                    dispatch({type: constants.SET_RECAPTCHA_REQUIRED, value: data.captchaRequired})
+                }
+            })
         }
     }
 
     const onChange=(token)=>{
         dispatch({type: constants.SET_TOKEN, value: token})
     }
+
+    // useEffect(()=>{
+    //     console.log('did')
+    //     sendRequest(apiConstants.CHECK_ROUTE, constants.GET)
+    //     .then((data)=>{
+    //         dispatch({type: constants.SET_RECAPTCHA_REQUIRED, value: data.captchaRequired})
+    //     })
+    //     // eslint-disable-next-line
+    // },[])
 
     return (
         <form className="form" onSubmit={(e)=>onSubmitHandler(e)}>
@@ -103,6 +119,7 @@ const Form = (props) => {
             sitekey="6LeLceIUAAAAAB-fTZBbFNzoSw15lIeopqRFgKI1"
             ref={recaptchaComponent}
             onChange={onChange}
+            onExpired={()=>dispatch({type: constants.SET_TOKEN, value: ''})}
             />:null}
             <button type="submit" >Register</button>
             {httpState.error?<div className="flash">{httpState.error+"*"}</div>:null}

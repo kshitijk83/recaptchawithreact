@@ -11,8 +11,6 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-google-recaptcha": "^2.0.1",
-    "react-recaptcha": "^2.3.10",
-    "react-recaptcha-google": "^1.1.1",
     "react-scripts": "3.4.0"
   },
   "scripts": {

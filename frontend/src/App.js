@@ -1,12 +1,7 @@
-import React, {useEffect} from 'react';
-import { loadReCaptcha } from 'react-recaptcha-google'
+import React from 'react';
 import Form from './components/Form';
 
 function App() {
-
-  useEffect(()=>{
-    loadReCaptcha();
-  },[]);
 
   return (
     <div className="App">
