@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -13,19 +12,20 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use((req, res, next)=>{
+    // for allowing cross-origin requests
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 })
 
-// only 3 times ip address middleware
+// middleware for 3 times of a request from same ip
 app.use(rateLimiterMiddleware);
 
 // route for authentication
 app.use(routeConstants.authRoute, authRoutes);
 
-// Error middleware for handling centralized errors
+// Error middleware for centralized error handling
 app.use((error, req, res, next)=>{
     console.log(error);
     const status = error.statusCode||500;

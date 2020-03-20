@@ -12,7 +12,7 @@ exports.signup=(req, res, next)=>{
     const recaptchaToken = req.body.recaptchaToken;
     
     const errors = validationResult(req);
-
+    // handling validation errors.
     if (!errors.isEmpty()) {
         console.log(errors.array());
         return res.status(422).json({
@@ -22,7 +22,7 @@ exports.signup=(req, res, next)=>{
 
     let data;
 
-    if(res.locals.captchaRequired&&recaptchaToken){
+    if(res.locals.captchaRequired&&recaptchaToken){ // if captcha is required and token is already there, verify it and then save the user data
         data = {
             remoteip: req.connection.remoteAddress,
             response: recaptchaToken,
@@ -53,12 +53,12 @@ exports.signup=(req, res, next)=>{
             next(err);
         })
     }
-    else if(res.locals.captchaRequired&&!recaptchaToken){
+    else if(res.locals.captchaRequired&&!recaptchaToken){ // if captcha is required and token is not there, request for token first
         res.status(200).json({
             captchaRequired: res.locals.captchaRequired,
             message: "captcha is required"
         });
-    } else{
+    } else{ // if recaptcha is not required, just save the user data
         return bcrypt.hash(password, 12)
         .then(hashedPsw=>{
             const user = new User({

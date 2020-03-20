@@ -5,7 +5,7 @@ const routeConstants = require('../appConstants');
 const authController = require('../controller/auth');
 
 const router = express.Router();
-
+// route for signup with validation for email and password
 router.post(
     routeConstants.signupRoute,
     [

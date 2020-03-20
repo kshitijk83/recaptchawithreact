@@ -39,19 +39,30 @@ const userReducer = (currentState, action)=>{
                 ...currentState,
                 recaptchaRequired: action.value
             };
+        case constants.CLEAR:
+            return {
+                ...currentState,
+                name: '',
+                email: '',
+                password: '',
+                token: '',
+            }
         default:
             throw Error('Should not reach here');
     }
 }
 
 const Form = (props) => {
-    const [state, dispatch] = useReducer(userReducer, initState);
+    const [state, dispatch] = useReducer(userReducer, initState); // a redecur hook for maintaining the form 
     const {
         httpState,
         sendRequest,
         clear,
     } = useHttp();
-    const recaptchaComponent = useRef(null);
+
+    const captchaRef = useRef(null);
+
+    // for submitting the form
     const onSubmitHandler = (event)=>{
         event.preventDefault();
         let data = {
@@ -60,12 +71,22 @@ const Form = (props) => {
             password: state.password,
         }
         clear();
+
         if(state.recaptchaRequired&&state.token){
+            // if captcha is required, i.e., person had made more than 3 requests in 1hr period
             data.recaptchaToken = state.token;
             sendRequest(apiConstants.SIGNUP_ROUTE, constants.POST, data)
+            .then((res)=>{
+                debugger;
+                dispatch({type: constants.CLEAR});
+                captchaRef.current.reset();
+            })
         } else{
+            // if captcha not required send the request without any recaptcha-token for verification
             sendRequest(apiConstants.SIGNUP_ROUTE, constants.POST, data)
             .then((data)=>{
+                // if the back end requires recaptcha token, we will activate it
+                dispatch({type: constants.CLEAR});
                 if(data&&data.captchaRequired){
                     dispatch({type: constants.SET_RECAPTCHA_REQUIRED, value: data.captchaRequired})
                 }
@@ -74,17 +95,9 @@ const Form = (props) => {
     }
 
     const onChange=(token)=>{
+        // when recaptcha is verified, token is stored
         dispatch({type: constants.SET_TOKEN, value: token})
     }
-
-    // useEffect(()=>{
-    //     console.log('did')
-    //     sendRequest(apiConstants.CHECK_ROUTE, constants.GET)
-    //     .then((data)=>{
-    //         dispatch({type: constants.SET_RECAPTCHA_REQUIRED, value: data.captchaRequired})
-    //     })
-    //     // eslint-disable-next-line
-    // },[])
 
     return (
         <form className="form" onSubmit={(e)=>onSubmitHandler(e)}>
@@ -115,11 +128,11 @@ const Form = (props) => {
                 />
             </div>
             {state.recaptchaRequired?<ReCaptcha
-            sitekey="6LeLceIUAAAAAB-fTZBbFNzoSw15lIeopqRFgKI1"
-            ref={recaptchaComponent}
-            onChange={onChange}
-            onExpired={()=>dispatch({type: constants.SET_TOKEN, value: ''})}
-            />:null}
+                ref={captchaRef}
+                sitekey="6LeLceIUAAAAAB-fTZBbFNzoSw15lIeopqRFgKI1"
+                onChange={onChange}
+                onExpired={()=>dispatch({type: constants.SET_TOKEN, value: ''})}
+                />:null}
             <button type="submit" >Register</button>
             {httpState.isLoading?<div className="flash">{"Loading..."}</div>:null}
             {httpState.error?<div className="flash">{httpState.error+"*"}</div>:null}
