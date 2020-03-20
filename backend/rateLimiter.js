@@ -2,7 +2,7 @@ const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 const rateLimiter = new RateLimiterMemory({
     points: 4,
-    duration: 60*60
+    duration: 60
 })
 
 const rateLimiterMiddleware = (req, res, next)=>{

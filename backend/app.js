@@ -8,7 +8,6 @@ const rateLimiterMiddleware = require('./rateLimiter');
 const routeConstants = require('./appConstants'); 
 
 const authRoutes = require('./routes/auth');
-const checkRoute = require('./routes/check');
 
 const app = express();
 
@@ -20,11 +19,13 @@ app.use((req, res, next)=>{
     next();
 })
 
+// only 3 times ip address middleware
 app.use(rateLimiterMiddleware);
 
+// route for authentication
 app.use(routeConstants.authRoute, authRoutes);
-app.use(routeConstants.checkRoute, checkRoute);
 
+// Error middleware for handling centralized errors
 app.use((error, req, res, next)=>{
     console.log(error);
     const status = error.statusCode||500;
@@ -36,8 +37,8 @@ app.use((error, req, res, next)=>{
     })
 })
 
-// const DATABASE_URI = "mongodb+srv://kshitijk83:451422ere@paracticing-bfzmz.mongodb.net/test?retryWrites=true&w=majority";
-const DATABASE_URI =process.env.MONGODB_URI||'mongodb://localhost:27017/test';
+const DATABASE_URI = "mongodb+srv://kshitijk83:451422ere@paracticing-bfzmz.mongodb.net/test?retryWrites=true&w=majority";
+// const DATABASE_URI =process.env.MONGODB_URI||'mongodb://localhost:27017/test';
 mongoose.connect(DATABASE_URI, {useNewUrlParser: true, useUnifiedTopology: true})
 .then(res=>{
     app.listen(process.env.PORT||8080);

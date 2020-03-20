@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const constants = require('../appConstants');
 const utils = require('../utils/utils');
@@ -9,7 +10,18 @@ exports.signup=(req, res, next)=>{
     const password = req.body.password;
     const email = req.body.password;
     const recaptchaToken = req.body.recaptchaToken;
+    
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        console.log(errors.array());
+        return res.status(422).json({
+          message: errors.array()[0].msg,
+        });
+      }
+
     let data;
+
     if(res.locals.captchaRequired&&recaptchaToken){
         data = {
             remoteip: req.connection.remoteAddress,

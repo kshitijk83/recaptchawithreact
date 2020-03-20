@@ -1,4 +1,4 @@
-import React, {useReducer, useRef, useEffect} from 'react';
+import React, {useReducer, useRef} from 'react';
 import ReCaptcha from 'react-google-recaptcha';
 import useHttp from '../hooks/http';
 import * as constants from '../constants';
@@ -122,6 +122,7 @@ const Form = (props) => {
             onExpired={()=>dispatch({type: constants.SET_TOKEN, value: ''})}
             />:null}
             <button type="submit" >Register</button>
+            {httpState.isLoading?<div className="flash">{"Loading..."}</div>:null}
             {httpState.error?<div className="flash">{httpState.error+"*"}</div>:null}
             {httpState.successMessage?<div className="flash">{httpState.successMessage+"*"}</div>:null}
         </form>
