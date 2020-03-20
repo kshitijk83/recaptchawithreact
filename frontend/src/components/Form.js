@@ -53,7 +53,6 @@ const Form = (props) => {
     } = useHttp();
     const recaptchaComponent = useRef(null);
     const onSubmitHandler = (event)=>{
-        console.log('blah');
         event.preventDefault();
         let data = {
             name: state.name,
